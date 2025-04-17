@@ -1,0 +1,56 @@
+---
+interface Props {
+  name: string;
+  role: string;
+  image?: string;
+}
+
+const { name, role, image = "/assets/robot.jpeg" } = Astro.props;
+---
+
+<div class="team-member">
+  <div class="member-image">
+    <img src={image} alt={`${name} - ${role}`} />
+  </div>
+  <div class="member-info">
+    <h3>{name}</h3>
+    <p class="role">{role}</p>
+  </div>
+</div>
+
+<style>
+  .team-member {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+
+  .team-member:hover {
+    transform: translateY(-5px);
+  }
+
+  .member-image img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+  }
+
+  .member-info {
+    padding: 1.25rem;
+  }
+
+  .member-info h3 {
+    margin-bottom: 0.5rem;
+    color: var(--primary);
+  }
+
+  .role {
+    color: var(--accent);
+    font-size: 0.9rem;
+    margin-bottom: 0;
+  }
+</style>

@@ -1,0 +1,53 @@
+---
+import Layout from "./Layout.astro";
+
+const { frontmatter } = Astro.props;
+---
+
+<Layout title={frontmatter.title}>
+  <div class="markdown-content">
+    <h1>{frontmatter.title}</h1>
+    <slot />
+  </div>
+</Layout>
+
+<style>
+  .markdown-content {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .markdown-content h1 {
+    color: var(--primary);
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .markdown-content h2 {
+    color: var(--secondary);
+    font-size: 1.8rem;
+    margin: 1.5rem 0 1rem;
+  }
+
+  .markdown-content h3 {
+    color: var(--accent);
+    font-size: 1.4rem;
+    margin: 1.2rem 0 0.8rem;
+  }
+
+  .markdown-content p {
+    margin-bottom: 1.2rem;
+    line-height: 1.7;
+  }
+
+  .markdown-content img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+  }
+
+  .markdown-content ul,
+  .markdown-content ol {
+    margin: 1rem 0 1.5rem 1.5rem;
+  }
+</style>

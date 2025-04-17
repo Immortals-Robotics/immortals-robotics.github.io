@@ -1,0 +1,229 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+---
+
+<Layout>
+	<Hero 
+		title="Immortals Robotics Team" 
+		subtitle="Pushing the boundaries of robotics technology and innovation"
+		image="/assets/robot.jpeg"
+	/>
+
+	<section class="features">
+		<div class="container">
+			<h2 class="section-title">What We Do</h2>
+			<div class="feature-grid">
+				<div class="feature-card">
+					<img src="/assets/robots-2.jpeg" alt="Competition Robots" />
+					<h3>Competition</h3>
+					<p>We participate in national and international robotics competitions, showcasing our innovative designs and solutions.</p>
+				</div>
+				<div class="feature-card">
+					<img src="/assets/robots-3.jpeg" alt="Research and Development" />
+					<h3>Research</h3>
+					<p>Our team conducts cutting-edge research in robotics, artificial intelligence, and machine learning.</p>
+				</div>
+				<div class="feature-card">
+					<img src="/assets/Cup-1.jpeg" alt="Awards and Achievements" />
+					<h3>Excellence</h3>
+					<p>We strive for excellence in all our projects, earning recognition and awards for our technical achievements.</p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="cta">
+		<div class="container">
+			<h2>Join Our Team</h2>
+			<p>Are you passionate about robotics? Join the Immortals team and help us shape the future of technology.</p>
+			<a href="/contact" class="btn">Get Involved</a>
+		</div>
+	</section>
+
+	<section class="latest-news">
+		<div class="container">
+			<h2 class="section-title">Latest News</h2>
+			<div class="news-grid">
+				<a href="/news/robocup-2023" class="news-card">
+					<img src="/assets/Cup-1.jpeg" alt="RoboCup 2023" />
+					<h3>RoboCup 2023 Results</h3>
+					<p>Check out our team's performance at the latest RoboCup competition.</p>
+				</a>
+				<div class="news-card">
+					<img src="/assets/robot-3D.jpeg" alt="3D Printing Workshop" />
+					<h3>3D Printing Workshop</h3>
+					<p>We hosted a workshop on 3D printing technologies for robotics applications.</p>
+				</div>
+				<div class="news-card">
+					<img src="/assets/robots.jpeg" alt="New Team Members" />
+					<h3>Welcoming New Members</h3>
+					<p>The Immortals team is growing! Meet our newest team members.</p>
+				</div>
+			</div>
+			<div class="center">
+				<a href="/news" class="btn btn-outline">View All News</a>
+			</div>
+		</div>
+	</section>
+</Layout>
+
+<style>
+	.container {
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 0 1.5rem;
+	}
+	
+	.section-title {
+		text-align: center;
+		margin-bottom: 2rem;
+		font-size: 2rem;
+	}
+	
+	/* Features Section */
+	.features {
+		padding: 4rem 0;
+		background-color: #EFF5F9; /* Light Gray from your color palette */
+	}
+	
+	.feature-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+		gap: 2rem;
+	}
+	
+	.feature-card {
+		background-color: #ffffff; /* White background for cards */
+		border-radius: 8px;
+		overflow: hidden;
+		box-shadow: 0 4px 10px rgba(0, 65, 70, 0.1); /* Shadow with Dark Teal tint */
+		transition: transform 0.3s ease, box-shadow 0.3s ease;
+		border-top: 3px solid #03BFB5; /* Light Teal accent */
+	}
+	
+	.feature-card:hover {
+		transform: translateY(-5px);
+	}
+	
+	.feature-card img {
+		width: 100%;
+		height: 200px;
+		object-fit: cover;
+	}
+	
+	.feature-card h3 {
+		padding: 1rem 1rem 0.5rem;
+		font-size: 1.5rem;
+	}
+	
+	.feature-card p {
+		padding: 0 1rem 1.5rem;
+		color: #949398; /* Medium Gray from your color palette */
+	}
+	
+	/* CTA Section */
+	.cta {
+		background-color: #004146; /* Dark Teal from your color palette */
+		color: white;
+		padding: 4rem 0;
+		text-align: center;
+		margin: 2rem 0;
+		background-image: linear-gradient(135deg, #004146 0%, #018076 100%); /* Gradient from Dark to Medium Teal */
+	}
+	
+	.cta h2 {
+		margin-bottom: 1rem;
+		font-size: 2rem;
+	}
+	
+	.cta p {
+		max-width: 600px;
+		margin: 0 auto 2rem;
+		font-size: 1.1rem;
+	}
+	
+	/* News Section */
+	.latest-news {
+		padding: 4rem 0;
+	}
+	
+	.news-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+		gap: 2rem;
+		margin-bottom: 2rem;
+	}
+	
+	.news-card {
+		background-color: white;
+		border-radius: 8px;
+		overflow: hidden;
+		box-shadow: 0 4px 8px rgba(0, 65, 70, 0.1);
+		transition: transform 0.3s ease, box-shadow 0.3s ease;
+		text-decoration: none;
+		color: inherit;
+		display: block;
+		border-bottom: 3px solid #03BFB5; /* Light Teal accent from your color palette */
+	}
+	
+	.news-card:hover {
+		transform: translateY(-5px);
+		box-shadow: 0 6px 12px rgba(0, 65, 70, 0.15);
+	}
+	
+	.news-card img {
+		width: 100%;
+		height: 200px;
+		object-fit: cover;
+	}
+	
+	.news-card h3 {
+		padding: 1rem 1rem 0.5rem;
+		font-size: 1.3rem;
+		color: #004146; /* Dark Teal from your color palette */
+	}
+	
+	.news-card p {
+		padding: 0 1rem 1.5rem;
+		color: #949398; /* Medium Gray from your color palette */
+	}
+	
+	.center {
+		text-align: center;
+	}
+	
+	/* Button Styles */
+	.btn {
+		display: inline-block;
+		padding: 0.8rem 1.6rem;
+		background-color: #03BFB5; /* Light Teal from your color palette */
+		color: white;
+		text-decoration: none;
+		border-radius: 4px;
+		font-weight: 600;
+		transition: background-color 0.3s ease;
+	}
+	
+	.btn:hover {
+		background-color: #018076; /* Medium Teal - darker shade for hover */
+	}
+	
+	.btn-outline {
+		background-color: transparent;
+		border: 2px solid #03BFB5; /* Light Teal */
+		color: #004146; /* Dark Teal */
+	}
+	
+	.btn-outline:hover {
+		background-color: #03BFB5;
+		color: white;
+	}
+	
+	/* Responsive Adjustments */
+	@media (max-width: 768px) {
+		.feature-grid, .news-grid {
+			grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+		}
+	}
+</style>

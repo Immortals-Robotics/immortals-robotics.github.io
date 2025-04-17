@@ -1,0 +1,49 @@
+---
+import Layout from '../layouts/Layout.astro';
+import TeamMember from '../components/TeamMember.astro';
+
+const title = "Team Members";
+---
+
+<Layout title={title}>
+<div class="team-page">
+  <h1>Our Team</h1>
+  
+  <p class="team-intro">
+    The Immortals team consists of talented computer and electrical engineers dedicated to advancing robotics technology through the RoboCup Small Size League competition.
+  </p>
+  
+  <div class="team-grid">
+    <TeamMember name="Alex Johnson" role="Team Lead & Software Engineer" image="/assets/robot.jpeg" />
+    <TeamMember name="Sarah Chen" role="Electrical Engineer" image="/assets/robots-2.jpeg" />
+    <TeamMember name="Mohammed Ali" role="Mechanical Engineer" image="/assets/robots-3.jpeg" />
+    <TeamMember name="Elena Rodriguez" role="Vision Systems Specialist" image="/assets/robot-3D.jpeg" />
+    <TeamMember name="David Kim" role="Strategy Algorithms Developer" image="/assets/robots.jpeg" />
+    <TeamMember name="Lisa Patel" role="Electronics Designer" />
+  </div>
+</div>
+
+<style>
+  .team-page {
+    padding: 2rem 0;
+  }
+  
+  h1 {
+    text-align: center;
+    margin-bottom: 0.5rem;
+    color: var(--primary);
+  }
+  
+  .team-intro {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 3rem;
+    font-size: 1.1rem;
+  }
+  
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+  }
+</style>

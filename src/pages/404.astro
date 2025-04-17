@@ -1,0 +1,43 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="404: Page Not Found">
+  <div class="error-container">
+    <h1>404</h1>
+    <p>Oops! The page you are looking for cannot be found.</p>
+    <div class="robot-image">
+      <img src="/assets/robot.jpeg" alt="Robot" />
+    </div>
+    <p>It seems our robots can't find what you're looking for.</p>
+    <a href="/" class="btn">Return to Homepage</a>
+  </div>
+</Layout>
+
+<style>
+  .error-container {
+    text-align: center;
+    padding: 4rem 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  h1 {
+    font-size: 6rem;
+    color: var(--highlight);
+    margin-bottom: 1rem;
+  }
+  
+  .robot-image {
+    max-width: 300px;
+    margin: 2rem auto;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  }
+  
+  p {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+  }
+</style>

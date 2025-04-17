@@ -1,0 +1,84 @@
+---
+interface Props {
+  title: string;
+  subtitle: string;
+  image: string;
+}
+
+const { title, subtitle, image } = Astro.props;
+---
+
+<section class="hero">
+  <div class="hero-content">
+    <h1>{title}</h1>
+    <p>{subtitle}</p>
+    <div class="hero-buttons">
+      <a href="/about" class="btn">Learn More</a>
+      <a href="/contact" class="btn btn-outline">Contact Us</a>
+    </div>
+  </div>
+  <div class="hero-image">
+    <img src={image} alt="Immortals Robotics Team" />
+  </div>
+</section>
+
+<style>
+  .hero {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    align-items: center;
+    margin: 2rem 0 4rem;
+  }
+
+  .hero-content {
+    flex: 1;
+  }
+
+  .hero-content h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: var(--primary);
+  }
+
+  .hero-content p {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    color: var(--secondary);
+  }
+
+  .hero-buttons {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .btn-outline {
+    background-color: transparent;
+    border: 2px solid var(--highlight);
+    color: var(--highlight);
+  }
+
+  .btn-outline:hover {
+    background-color: var(--highlight);
+    color: white;
+  }
+
+  .hero-image {
+    flex: 1;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .hero-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  @media (max-width: 768px) {
+    .hero {
+      flex-direction: column-reverse;
+    }
+  }
+</style>
