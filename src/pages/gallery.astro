@@ -1,0 +1,354 @@
+---
+import Layout from '../layouts/Layout.astro';
+import fs from 'fs/promises';
+import path from 'path';
+
+// Define image type for TypeScript
+interface GalleryImage {
+  path: string;
+  filename: string;
+  caption: string;
+}
+
+// Get the gallery folder path
+const galleryPath = 'public/assets/Photo gallery';
+const absolutePath = path.join(process.cwd(), galleryPath);
+
+// Get all subfolders (categories) in the gallery directory
+const categories = (await fs.readdir(absolutePath, { withFileTypes: true }))
+  .filter(dirent => dirent.isDirectory())
+  .map(dirent => dirent.name);
+
+const imageExtensions = ['.jpeg', '.jpg', '.png', '.heic', '.gif', '.webp'];
+
+// Create a map to store images by category
+const imagesByCategory: Record<string, GalleryImage[]> = {};
+
+// Process each category folder to get its images
+for (const category of categories) {
+  const categoryPath = path.join(absolutePath, category);
+  const files = await fs.readdir(categoryPath);
+  
+  imagesByCategory[category] = files
+    .filter(file => {
+      const ext = path.extname(file).toLowerCase();
+      return imageExtensions.includes(ext);
+    })
+    .map(file => {
+      // Create a clean caption from the filename
+      let caption = path.basename(file, path.extname(file));
+      
+      // If the filename follows the "Name (#)" pattern, clean it up
+      caption = caption.replace(/\s*\(\d+\)\s*$/, '');
+      
+      return {
+        path: `/assets/Photo gallery/${category}/${file}`,
+        filename: file,
+        caption: caption
+      };
+    });
+}
+---
+
+<Layout title="Gallery | Immortals Robotics">
+  <!-- Lightbox component -->
+  <div id="lightbox" class="lightbox">
+    <span class="close" onclick="closeLightbox()">&times;</span>
+    <img id="lightbox-img" class="lightbox-content">
+    <div id="lightbox-caption" class="lightbox-caption"></div>
+  </div>
+  <main>
+    <section class="gallery-header">
+      <h1>Photo Gallery</h1>
+      <p>Browse through our collection of images showcasing our team and robots in action</p>
+    </section>
+
+    <div class="categories-nav">
+      <ul>
+        {categories.map((category) => (
+          <li>
+            <a href={`#${category.replace(/\s+/g, '-').toLowerCase()}`}>{category}</a>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    {categories.map((category: string) => {
+      const categoryImages = imagesByCategory[category] || [];
+      return categoryImages.length > 0 && (
+        <section id={category.replace(/\s+/g, '-').toLowerCase()} class="category-section">
+          <h2 class="category-title">{category}</h2>
+          <div class="gallery-container">
+            {categoryImages.map((image: GalleryImage) => (
+              <div class="gallery-item">
+                <img 
+                  src={image.path} 
+                  alt={image.caption} 
+                  loading="lazy" 
+                  class="gallery-image"
+                  data-src={image.path}
+                  data-caption={image.caption}
+                />
+                <div class="caption">
+                  <p>{image.caption}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      );
+    })}
+  </main>
+</Layout>
+
+<style>
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+  }
+  
+  .gallery-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .categories-nav {
+    margin-bottom: 2rem;
+  }
+
+  .categories-nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    list-style: none;
+    padding: 0;
+  }
+
+  .categories-nav li a {
+    display: block;
+    padding: 0.5rem 1rem;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #333;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+  }
+
+  .categories-nav li a:hover {
+    background-color: #e0e0e0;
+  }
+
+  .category-section {
+    margin-bottom: 3rem;
+    scroll-margin-top: 2rem;
+  }
+
+  .category-title {
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #f0f0f0;
+  }
+  
+  .gallery-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .gallery-item {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+  
+  .gallery-item:hover {
+    transform: translateY(-5px);
+  }
+  
+  .gallery-item img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    display: block;
+  }
+  
+  .caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 0.5rem;
+    text-align: center;
+  }
+  
+  .caption p {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+  
+  @media (max-width: 768px) {
+    .gallery-container {
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+    
+    .gallery-item img {
+      height: 250px;
+    }
+
+    .categories-nav ul {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .categories-nav li {
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .categories-nav li a {
+      text-align: center;
+    }
+  }
+
+  /* Lightbox styles */
+  .lightbox {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    padding-top: 50px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.9);
+  }
+
+  .lightbox-content {
+    margin: auto;
+    display: block;
+    max-width: 95%;
+    max-height: 90vh;
+    object-fit: contain;
+    animation-name: zoom;
+    animation-duration: 0.3s;
+  }
+
+  @keyframes zoom {
+    from {transform: scale(0.1)}
+    to {transform: scale(1)}
+  }
+
+  .lightbox-caption {
+    margin: auto;
+    width: 80%;
+    max-width: 700px;
+    text-align: center;
+    color: #ccc;
+    padding: 10px 0;
+    height: 50px;
+    font-size: 1.1rem;
+  }
+
+  .close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+    z-index: 1001;
+  }
+
+  .close:hover,
+  .close:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+  }
+</style>
+
+<script>
+  // Lightbox functionality
+  function openLightbox(imageSrc: string, caption: string): void {
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement;
+    const lightboxCaption = document.getElementById('lightbox-caption');
+    
+    if (lightbox && lightboxImg && lightboxCaption) {
+      // Set image source and caption
+      lightboxImg.src = imageSrc;
+      lightboxCaption.innerHTML = caption;
+      
+      // Show lightbox
+      lightbox.style.display = 'block';
+      
+      // Prevent scrolling
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  function closeLightbox(): void {
+    const lightbox = document.getElementById('lightbox');
+    if (lightbox) {
+      lightbox.style.display = 'none';
+      
+      // Re-enable scrolling
+      document.body.style.overflow = 'auto';
+    }
+  }
+
+  // Close lightbox when clicking outside the image
+  document.addEventListener('DOMContentLoaded', () => {
+    const lightbox = document.getElementById('lightbox');
+    if (lightbox) {
+      lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) {
+          closeLightbox();
+        }
+      });
+    }
+
+    // Close lightbox with Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeLightbox();
+      }
+    });
+
+    // Add click event listeners to all gallery images
+    const galleryImages = document.querySelectorAll('.gallery-image');
+    galleryImages.forEach((image) => {
+      image.addEventListener('click', () => {
+        const src = image.getAttribute('data-src') || '';
+        const caption = image.getAttribute('data-caption') || '';
+        openLightbox(src, caption);
+      });
+    });
+  });
+
+  // Close lightbox when clicking outside the image
+  document.addEventListener('DOMContentLoaded', () => {
+    const lightbox = document.getElementById('lightbox');
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) {
+        closeLightbox();
+      }
+    });
+
+    // Close lightbox with Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeLightbox();
+      }
+    });
+  });
+</script>
