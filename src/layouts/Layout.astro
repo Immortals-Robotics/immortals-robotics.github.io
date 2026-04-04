@@ -72,6 +72,10 @@ const { title = "Immortals Robotics Team" } = Astro.props;
 					<img src="/assets/logo.png" alt="Immortals Logo" height="40" />
 					<p>© {new Date().getFullYear()} Immortals Robotics Team</p>
 				</div>
+				<div class="footer-links">
+					<a href="https://www.instagram.com/immortals.robotics" target="_blank" rel="noopener noreferrer">Instagram</a>
+					<a href="https://github.com/immortals-robotics" target="_blank" rel="noopener noreferrer">GitHub</a>
+				</div>
 			</div>
 		</footer>
 	</body>
@@ -161,6 +165,17 @@ const { title = "Immortals Robotics Team" } = Astro.props;
 		display: flex;
 		align-items: center;
 		gap: 1rem;
+	}
+
+	.footer-links {
+		display: flex;
+		gap: 1.5rem;
+		margin-top: 0.75rem;
+	}
+
+	.footer-links a {
+		color: var(--highlight);
+		font-size: 0.95rem;
 	}
 	
 	h1, h2, h3, h4, h5, h6 {
