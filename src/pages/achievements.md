@@ -9,6 +9,9 @@ The Immortals team has a strong track record of success in international RoboCup
 
 ## Major Awards
 
+### German Open 2025
+- 🥈 2nd Place Overall
+
 ### RoboCup 2023 - Bordeaux, France
 - 🥉 3rd Place Overall
 - Technical Challenge Finalist

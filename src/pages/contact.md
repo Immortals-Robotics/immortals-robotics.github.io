@@ -9,9 +9,9 @@ Interested in learning more about the Immortals Robotics Team? Have questions ab
 
 ## Contact Information
 
-- **Email**: immortals@robotics.org
-- **Location**: Robotics Research Lab, Building 42, Innovation Campus
-- **Social Media**: [@ImmortalsSLL](https://twitter.com/immortalssll)
+- **Email**: [immortals.robotics@gmail.com](mailto:immortals.robotics@gmail.com)
+- **Instagram**: [@immortals.robotics](https://www.instagram.com/immortals.robotics)
+- **GitHub**: [immortals-robotics](https://github.com/immortals-robotics)
 
 ![Robots](/assets/robot.jpeg)
 
