@@ -1,0 +1,69 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Album from '../../components/gallery/Album.astro';
+import Lightbox from '../../components/gallery/Lightbox.astro';
+
+// By `order`, then newest first; undated albums go last.
+const albums = (await getCollection('gallery')).sort(
+  (a, b) => a.data.order - b.data.order || (b.data.date?.getTime() ?? 0) - (a.data.date?.getTime() ?? 0),
+);
+---
+
+<Layout
+  title="Gallery"
+  description="Photos of the Immortals RoboCup Small Size League team at competitions, with our robots and other teams."
+  image={albums[0].data.photos[0].src}
+>
+  <div class="container page-header">
+    <span class="eyebrow">Gallery</span>
+    <h1>Photos from the field</h1>
+    <p>Competitions, award ceremonies and the people and robots behind Immortals.</p>
+  </div>
+
+  <div class="container">
+    <nav class="albums-nav" aria-label="Albums">
+      <ul role="list">
+        {
+          albums.map((album) => (
+            <li>
+              <a class="chip" href={`#${album.id}`}>
+                {album.data.title}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    {albums.map((album) => <Album album={album} />)}
+  </div>
+
+  <Lightbox />
+</Layout>
+
+<style>
+  .albums-nav {
+    margin-bottom: clamp(2rem, 5vw, 3rem);
+  }
+
+  .albums-nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .chip {
+    padding: 0.35rem 0.85rem;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: background-color 0.15s, color 0.15s;
+  }
+
+  .chip:hover {
+    background: var(--accent-bg);
+    color: var(--on-accent);
+  }
+</style>
