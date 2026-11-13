@@ -1,8 +1,43 @@
 ---
-// STUB: replaced by a sub-agent.
+import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
+import RobotGeneration from '../components/robots/RobotGeneration.astro';
+import ogImage from '../assets/robots/trio-with-ball.jpg';
+
+// Current generation first, then newest year first; undated generations last.
+const robots = (await getCollection('robots')).sort(
+  (a, b) => Number(b.data.current) - Number(a.data.current) || (b.data.year ?? 0) - (a.data.year ?? 0),
+);
 ---
 
-<Layout title="Robots">
-  <div class="container page-header"><h1>Robots</h1></div>
+<Layout
+  title="Robots"
+  description="The Immortals RoboCup Small Size League robots: omnidirectional drive, kicker and dribbler, inside the 18 cm × 15 cm size limit."
+  image={ogImage}
+>
+  <header class="container page-header">
+    <span class="eyebrow">Robots</span>
+    <h1>Our robots</h1>
+    <p>
+      Every Immortals robot is designed and built by the team to fit the Small Size League limits: at most 18 cm across
+      and 15 cm tall, and fully autonomous on the field.
+    </p>
+  </header>
+
+  <div class="container generations">
+    {robots.map((robot, i) => <RobotGeneration robot={robot} eager={i === 0} />)}
+  </div>
 </Layout>
+
+<style>
+  .generations {
+    display: grid;
+    gap: clamp(2rem, 5vw, 3.5rem);
+  }
+
+  /* Separate generations with a rule once there is more than one. */
+  .generations > :global(* + *) {
+    padding-top: clamp(2rem, 5vw, 3.5rem);
+    border-top: 1px solid var(--border);
+  }
+</style>

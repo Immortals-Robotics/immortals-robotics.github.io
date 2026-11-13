@@ -1,0 +1,130 @@
+---
+// Up to three newest published posts. One post gets a wide feature card;
+// two or three share a row.
+import { getCollection } from 'astro:content';
+import { Picture } from 'astro:assets';
+import SectionHead from './SectionHead.astro';
+import FormattedDate from '../FormattedDate.astro';
+
+const posts = (await getCollection('news', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+
+const single = posts.length === 1;
+const sizes = single
+  ? '(min-width: 1200px) 560px, (min-width: 760px) 48vw, calc(100vw - 2rem)'
+  : '(min-width: 1200px) 380px, (min-width: 760px) 33vw, calc(100vw - 2rem)';
+---
+
+{
+  posts.length > 0 && (
+    <section class="section" aria-labelledby="news-title">
+      <div class="container">
+        <SectionHead id="news-title" eyebrow="News" title="Latest from the team" href="/news/" linkLabel="All news" />
+        <ul class="news-list" data-count={posts.length}>
+          {posts.map((post) => (
+            <li>
+              <a class="card news-card" href={`/news/${post.id}/`}>
+                {post.data.cover && (
+                  <div class="card-media">
+                    <Picture
+                      src={post.data.cover}
+                      formats={['avif', 'webp']}
+                      widths={[400, 640, 960]}
+                      sizes={sizes}
+                      alt={post.data.coverAlt ?? ''}
+                    />
+                  </div>
+                )}
+                <div class="card-body">
+                  <span class="date">
+                    <FormattedDate date={post.data.date} />
+                  </span>
+                  <h3>{post.data.title}</h3>
+                  <p>{post.data.summary}</p>
+                  <span class="read">
+                    Read the story <span aria-hidden="true">→</span>
+                  </span>
+                </div>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .news-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    gap: clamp(1rem, 3vw, 1.5rem);
+    padding: 0;
+    list-style: none;
+  }
+
+  .news-list > li {
+    display: flex;
+  }
+
+  .news-card {
+    flex: 1;
+  }
+
+  .date {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+  }
+
+  .news-card h3 {
+    color: var(--heading);
+  }
+
+  .read {
+    margin-top: auto;
+    padding-top: 0.5rem;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* A lone post becomes a wide feature card. */
+  @media (min-width: 760px) {
+    .news-list[data-count='1'] .news-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    .news-list[data-count='1'] .card-media {
+      position: relative;
+      aspect-ratio: auto;
+      min-height: 320px;
+    }
+
+    .news-list[data-count='1'] .card-media :global(img) {
+      position: absolute;
+      inset: 0;
+    }
+
+    .news-list[data-count='1'] .card-body {
+      justify-content: center;
+      padding: clamp(1.5rem, 4vw, 3rem);
+    }
+
+    .news-list[data-count='1'] h3 {
+      font-size: clamp(1.5rem, 2.5vw, 2rem);
+    }
+
+    .news-list[data-count='1'] p {
+      font-size: 1.0625rem;
+    }
+
+    .news-list[data-count='1'] .read {
+      margin-top: 0.75rem;
+    }
+  }
+
+  .card-media :global(picture) {
+    display: contents;
+  }
+</style>

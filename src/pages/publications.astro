@@ -1,8 +1,202 @@
 ---
-// STUB: replaced by a sub-agent.
+import { getCollection, type CollectionEntry } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
+import KindIcon from '../components/publications/KindIcon.astro';
+import type { ComponentProps } from 'astro/types';
+
+type Kind = CollectionEntry<'publications'>['data']['kind'];
+type KindIconName = ComponentProps<typeof KindIcon>['icon'];
+
+const GROUPS: { id: string; title: string; icon: KindIconName; kinds: Kind[] }[] = [
+  { id: 'tdps', title: 'Team Description Papers', icon: 'tdp', kinds: ['tdp', 'etdp'] },
+  { id: 'papers', title: 'Papers', icon: 'paper', kinds: ['paper'] },
+  { id: 'theses', title: 'Theses', icon: 'thesis', kinds: ['thesis'] },
+  { id: 'talks', title: 'Talks', icon: 'talk', kinds: ['talk'] },
+  { id: 'software', title: 'Software', icon: 'software', kinds: ['software'] },
+  { id: 'other', title: 'Other', icon: 'other', kinds: ['other'] },
+];
+
+const all = (await getCollection('publications')).sort(
+  (a, b) => b.data.year - a.data.year || a.data.title.localeCompare(b.data.title),
+);
+
+const groups = GROUPS.map((group) => ({
+  ...group,
+  items: all.filter((p) => group.kinds.includes(p.data.kind)),
+})).filter((group) => group.items.length > 0);
 ---
 
-<Layout title="Publications">
-  <div class="container page-header"><h1>Publications</h1></div>
+<Layout
+  title="Publications"
+  description="Team Description Papers, research papers, theses, talks and software from the Immortals RoboCup Small Size League team."
+>
+  <header class="container page-header">
+    <span class="eyebrow">Publications</span>
+    <h1>Papers, talks and code</h1>
+    <p>
+      Every team that applies to RoboCup submits a <strong>Team Description Paper</strong> (TDP) describing its robots'
+      hardware and software and what changed since the year before. The papers are published, so every team can learn
+      from the others. {
+        groups.some((g) => g.id === 'tdps')
+          ? 'Ours are listed below, along with our papers, talks and open-source work.'
+          : 'Below are our papers, talks and open-source work.'
+      }
+    </p>
+
+    {
+      groups.length > 1 && (
+        <nav class="jump" aria-label="Publication types">
+          {groups.map((group) => (
+            <a class="chip" href={`#${group.id}`}>
+              {group.title} <span class="count">{group.items.length}</span>
+            </a>
+          ))}
+        </nav>
+      )
+    }
+  </header>
+
+  <div class="container groups">
+    {
+      groups.map((group) => (
+        <section class="group" aria-labelledby={group.id}>
+          <h2 id={group.id}>
+            <span class="icon">
+              <KindIcon icon={group.icon} />
+            </span>
+            {group.title}
+          </h2>
+          <ol class="pubs">
+            {group.items.map(({ data }) => (
+              <li class="pub">
+                <span class="year">{data.year}</span>
+                <div>
+                  <h3 class="title">
+                    {data.url ? (
+                      <a href={data.url} rel="noopener">
+                        {data.title}
+                      </a>
+                    ) : (
+                      data.title
+                    )}
+                    {data.kind === 'etdp' && <span class="chip">Extended TDP</span>}
+                  </h3>
+                  {data.authors.length > 0 && <p class="authors">{data.authors.join(', ')}</p>}
+                  {data.venue && <p class="venue">{data.venue}</p>}
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ))
+    }
+  </div>
 </Layout>
+
+<style>
+  .page-header strong {
+    color: var(--text);
+  }
+
+  .jump {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .jump .chip {
+    padding: 0.3rem 0.8rem;
+    font-size: 0.875rem;
+    text-decoration: none;
+  }
+
+  .jump .chip:hover {
+    background: var(--accent-bg);
+    color: var(--on-accent);
+  }
+
+  .count {
+    margin-left: 0.2rem;
+    opacity: 0.75;
+  }
+
+  .groups {
+    display: grid;
+    gap: clamp(2rem, 5vw, 3rem);
+  }
+
+  .group h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+    font-size: clamp(1.3rem, 3vw, 1.6rem);
+  }
+
+  .icon {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--radius-sm);
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+
+  .pubs {
+    padding: 0;
+    list-style: none;
+  }
+
+  .pub {
+    display: grid;
+    grid-template-columns: 4rem minmax(0, 1fr);
+    gap: 1rem;
+    padding-block: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .year {
+    padding-top: 0.1rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+  }
+
+  .title {
+    color: var(--heading);
+    font-size: 1.0625rem;
+    line-height: 1.4;
+    text-wrap: pretty;
+  }
+
+  .title a {
+    text-decoration-thickness: 1px;
+  }
+
+  .title .chip {
+    margin-left: 0.5rem;
+    vertical-align: 0.1em;
+  }
+
+  .authors,
+  .venue {
+    margin-top: 0.2rem;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+
+  .venue {
+    font-style: italic;
+  }
+
+  @media (max-width: 480px) {
+    .pub {
+      grid-template-columns: 1fr;
+      gap: 0.15rem;
+    }
+  }
+</style>
