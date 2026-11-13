@@ -1,178 +1,68 @@
-# Immortals Robotics Team Website
+# Immortals Robotics website
 
-<div align="center">
-  <img src="/public/assets/logo.png" alt="Immortals Robotics Team Logo" width="300" />
-  <br/>
-  <h3><a href="https://immortals-robotics.com">immortals-robotics.com</a></h3>
-  <p>🤖 Official website for the Immortals Small Size League (SSL) robotics team</p>
-  
-  [![Built with Astro](https://astro.badgen.dev/v1)](https://astro.build)
-  [![Version](https://img.shields.io/badge/version-0.0.1-blue.svg)](https://github.com/immortals/Site)
-  [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-</div>
+Source for <https://immortals-robotics.github.io>, the website of Immortals, a RoboCup Small Size League team.
 
-## 📖 About
+Static site built with [Astro](https://astro.build). No client framework; the only JavaScript is the theme toggle, the mobile menu and the gallery lightbox.
 
-The Immortals Robotics Team is a distinguished Small Size League (SSL) robotics team founded in 2008. With multiple awards in RoboCup competitions, the team continues to push the boundaries of robotic technology and artificial intelligence.
+## Develop
 
-This repository contains the source code for the official Immortals Robotics Team website, built with [Astro](https://astro.build), a modern static site builder focused on performance.
+Requires Node.js 22 (20.3+ works).
 
-## ✨ Features
-
-- 🚀 **Fast Performance**: Built with Astro for optimal loading speeds
-- 📱 **Responsive Design**: Works on all devices and screen sizes
-- 📄 **Markdown Content**: Easy to update content using markdown files
-- 🖼️ **Image Optimization**: Automatic image optimization
-- 🔍 **SEO Friendly**: Optimized for search engines
-- 🏆 **Team Achievements**: Showcase of competitions and awards
-- 📰 **News Section**: Latest updates and team announcements
-
-## 📚 Getting Started
-
-### Prerequisites
-
-- [Node.js](https://nodejs.org/) (v16 or higher)
-- npm (comes with Node.js)
-
-### Installation
-
-1. Clone the repository
-   ```bash
-   git clone https://github.com/yourusername/immortals-site.git
-   cd immortals-site
-   ```
-
-2. Install dependencies
-   ```bash
-   npm install
-   ```
-
-3. Start the development server
-   ```bash
-   npm run dev
-   ```
-
-4. Open your browser and visit `http://localhost:4321`
-
-## 🚀 Project Structure
-
-```
-/
-├── public/
-│   ├── favicon.svg
-│   └── assets/        # Images and other static assets
-│       ├── logo.png
-│       ├── robots.jpeg
-│       └── ...
-├── src/
-│   ├── components/    # Reusable Astro components
-│   │   ├── Hero.astro
-│   │   └── TeamMember.astro
-│   ├── layouts/       # Page layouts
-│   │   ├── Layout.astro
-│   │   └── MarkdownLayout.astro
-│   └── pages/         # Page content
-│       ├── index.astro  # Home page
-│       ├── about.md
-│       ├── team.astro
-│       ├── achievements.md
-│       ├── contact.md
-│       └── news/
-│           ├── index.astro
-│           └── robocup-2023.md
-└── package.json       # Project dependencies and scripts
-```
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro`           | Run Astro CLI commands                           |
-
-## 📝 Content Management
-
-This site uses markdown files for content, making it easy to update. To modify or add content:
-
-1. Navigate to the `src/pages` directory
-2. Edit the markdown (.md) or Astro (.astro) files
-3. For markdown files, use the frontmatter section at the top to set metadata:
-   ```markdown
-   ---
-   layout: ../layouts/MarkdownLayout.astro
-   title: Your Page Title
-   description: Page description for SEO
-   ---
-   
-   Your markdown content here
-   ```
-
-### Adding News Articles
-
-To add a new news article:
-1. Create a new markdown file in `src/pages/news/`
-2. Use the proper frontmatter format
-3. Add your article content using markdown
-
-## 🖼️ Working with Images
-
-### Adding Images
-1. Place image files in the `public/assets/` directory
-2. Reference them in your markdown with: `![Alt text](/assets/your-image.jpg)`
-3. In Astro components, use: `<img src="/assets/your-image.jpg" alt="Description" />`
-
-### Recommended Image Formats
-- Use `.jpg` for photos
-- Use `.png` for graphics with transparency
-- Use `.svg` for icons and logos when possible
-- Consider `.webp` for better compression
-
-## 🧰 Customization
-
-The site uses:
-- Markdown for content pages
-- Astro components for layouts and interactive elements
-- CSS variables for consistent styling
-
-### Modifying the Theme
-To change the color scheme, edit the CSS variables in `src/layouts/Layout.astro`.
-
-## 📤 Deployment
-
-This site is built to be deployed to any static hosting service like Netlify, Vercel, or GitHub Pages.
-
-### Build for Production
 ```bash
-npm run build
+npm ci
+npm run dev        # http://localhost:4321
+npm run check      # type-check .astro/.ts and validate content
+npm run build      # output in dist/
+npm run preview    # serve dist/
 ```
 
-The built site will be in the `dist/` directory, ready to be deployed.
+Pushing to `main` builds and deploys to GitHub Pages (`.github/workflows/deploy.yml`). Pull requests run the type-check and build only.
 
-## 👥 Contributing
+## Where things live
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+```
+src/
+  content/              ← almost all edits happen here
+    news/*.md           one post per file; file name = URL (/news/<name>/)
+    robots/*.md         one robot generation per file
+    gallery/*.yaml      one album per file
+    achievements.yaml   competition results
+    team.yaml           team members
+    publications.yaml   TDPs, papers, theses, software
+  content.config.ts     schemas for the above (build fails on invalid content)
+  assets/               images, referenced from content files by relative path
+  data/site.ts          site name, nav, social links, contact email
+  layouts/Layout.astro  <head>, header, footer, theme handling
+  styles/global.css     design tokens (light/dark) and shared classes
+  pages/                routes
+public/                 files served as-is (favicon, robots.txt)
+docs/                   brand palette
+```
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+## Adding content
 
-## 📄 License
+**News post**: create `src/content/news/my-post.md`:
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 📞 Contact
-
-For questions or more information, please contact the Immortals Robotics Team at:
-- Email: contact@immortals-robotics.com
-- Website: [immortals-robotics.com](https://immortals-robotics.com)
-
+```md
+---
+title: 'RoboCup 2026: quarter-finals'
+date: 2026-07-20
+summary: One or two sentences for the news list and link previews.
+cover: ../../assets/news/robocup-2026.jpg   # optional
+coverAlt: What the photo shows               # required if cover is set
 ---
 
-<p align="center">Made with ❤️ by the Immortals Robotics Team</p>
+Markdown body…
+```
+
+**Photos**: put the files in `src/assets/gallery/<album>/` and list them in `src/content/gallery/<album>.yaml` with an `alt` text (and optional `caption`). Use kebab-case file names, no spaces.
+
+**Achievement, team member, publication**: add an entry to the corresponding YAML file; the comment at the top of each file shows the fields.
+
+### Images
+
+Put images in `src/assets/`, not `public/`. Astro resizes them and serves WebP/AVIF at the sizes each page needs. Keep originals reasonable (≤ 2560 px on the long edge, JPEG for photos). Phone photos in HEIC must be converted to JPEG first; browsers can't display HEIC.
+
+## Theming
+
+Colours are CSS custom properties in `src/styles/global.css`, defined once for light and once for dark. Use the tokens (`var(--accent)`, `var(--surface)`, …) instead of hex values so both themes keep working. The visitor's OS setting picks the initial theme; the header button overrides it and is remembered.

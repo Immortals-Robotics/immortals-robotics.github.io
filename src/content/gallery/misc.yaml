@@ -1,0 +1,16 @@
+# TODO(content pass): identify the event for each photo and move into the right album.
+title: More from the field
+order: 60
+photos:
+  - src: ../../assets/gallery/misc/group-photo-1.jpg
+    alt: Group photo of two teams with their robots on the field
+  - src: ../../assets/gallery/misc/group-photo-2.jpg
+    alt: Group photo with robots arranged in an arc on the field
+  - src: ../../assets/gallery/misc/group-photo-3.jpg
+    alt: Group photo of several teams with robots on the field
+  - src: ../../assets/gallery/misc/group-photo-4.jpg
+    alt: Group photo in front of a graffiti wall
+  - src: ../../assets/gallery/misc/group-photo-5.jpg
+    alt: Two teams with robots in front of a graffiti wall
+  - src: ../../assets/gallery/misc/group-photo-6.jpg
+    alt: Team members with robots arranged in an arc on the field

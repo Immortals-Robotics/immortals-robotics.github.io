@@ -1,0 +1,18 @@
+# Team members. Schema: src/content.config.ts (team)
+# photo: path relative to this file, e.g. ../assets/team/jane-doe.jpg (square works best)
+# TODO(content pass): real roles, areas, photos, links; add alumni with `alumni: true`.
+
+- id: ali-salehi
+  name: Ali Salehi
+  role: Team Member
+  order: 1
+
+- id: mohammad-shirazi
+  name: Mohammad Shirazi
+  role: Team Member
+  order: 2
+
+- id: sina-sharafzadeh
+  name: Sina Sharafzadeh
+  role: Team Member
+  order: 3

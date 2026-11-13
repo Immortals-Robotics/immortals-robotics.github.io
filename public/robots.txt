@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://immortals-robotics.github.io/sitemap-index.xml

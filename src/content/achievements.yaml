@@ -1,0 +1,69 @@
+# Competition results, newest first. Schema: src/content.config.ts (achievements)
+# TODO(content pass): every entry below was migrated from the old site and needs
+# verifying. Several awards on the old page looked like template filler.
+
+- id: german-open-2025
+  year: 2025
+  event: RoboCup German Open 2025
+  place: 2
+  highlight: true
+  # TODO: old site said 2025, but the trophy photo (assets/trophies) says 2024.
+  # Confirm whether this is a separate result or a typo.
+
+- id: german-open-2024
+  year: 2024
+  event: RoboCup German Open 2024
+  place: 2
+  highlight: true
+  # Source: trophy photo "RoboCup German Open 2024, 2nd place, Small Size League".
+
+- id: robocup-2023
+  year: 2023
+  event: RoboCup 2023
+  location: Bordeaux, France
+  division: Division A
+  place: 3
+  awards:
+    - Technical Challenge finalist # TODO verify
+  highlight: true
+
+- id: robocup-2021
+  year: 2021
+  event: RoboCup 2021
+  awards:
+    - Technical Innovation Award # TODO verify
+  result: Participated
+
+- id: robocup-2018
+  year: 2018
+  event: RoboCup 2018
+  result: Top 5 # TODO verify
+
+- id: robocup-2015
+  year: 2015
+  event: RoboCup 2015
+  awards:
+    - Best Teamwork Award # TODO verify
+  result: Participated
+
+- id: robocup-2012
+  year: 2012
+  event: RoboCup 2012
+  awards:
+    - Technical Challenge winner # TODO verify
+  result: Participated
+
+- id: robocup-2011
+  year: 2011
+  event: RoboCup 2011
+  location: Istanbul, Turkey
+  place: 2
+  awards:
+    - Best Robot Design Award # TODO verify
+  highlight: true
+
+- id: robocup-2009
+  year: 2009
+  event: RoboCup 2009
+  location: Graz, Austria
+  result: First RoboCup appearance

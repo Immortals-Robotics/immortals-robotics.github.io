@@ -1,288 +1,428 @@
 ---
+// Base layout for every page: <head> metadata, header/nav, theme toggle, footer.
+import '../styles/global.css';
+import { Image, getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import logo from '../assets/brand/logo.png';
+import defaultOgImage from '../assets/robots/lineup-field.jpg';
+import { NAV, SITE, SOCIALS } from '../data/site';
+
 interface Props {
-	title?: string;
+  /** Page title; omit on the home page. Rendered as "<title> · Immortals". */
+  title?: string;
+  /** Meta/OG description; defaults to the site description. */
+  description?: string;
+  /** Social preview image; defaults to a robot line-up photo. */
+  image?: ImageMetadata;
+  /** OG type. */
+  type?: 'website' | 'article';
 }
 
-const { title = "Immortals Robotics Team" } = Astro.props;
+const { title, description = SITE.description, image = defaultOgImage, type = 'website' } = Astro.props;
+
+const fullTitle = title ? `${title} · ${SITE.name}` : `${SITE.fullName} · ${SITE.tagline}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const og = await getImage({ src: image, width: 1200, format: 'jpg' });
+const ogUrl = new URL(og.src, Astro.site);
+
+const path = Astro.url.pathname;
+const isCurrent = (href: string) => path === href || path.startsWith(href);
 ---
 
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/assets/logo.png" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title} | Immortals SSL</title>
-		<meta name="description" content="Immortals Small Size League robotics team, founded in 2008 and participating in RoboCup competitions worldwide." />
-		<script>
-			// Toggle menu functionality
-			document.addEventListener('DOMContentLoaded', () => {
-				const hamburger = document.querySelector('.hamburger-menu');
-				const navLinks = document.querySelector('.nav-links');
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="theme-color" content="#f4f8fa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0a0f10" media="(prefers-color-scheme: dark)" />
+    <meta name="generator" content={Astro.generator} />
 
-				if (hamburger && navLinks) {
-					hamburger.addEventListener('click', () => {
-						hamburger.classList.toggle('active');
-						navLinks.classList.toggle('active');
-						document.body.classList.toggle('menu-open');
-					});
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content={SITE.fullName} />
+    <meta property="og:title" content={title ?? SITE.fullName} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
 
-					// Close menu when a link is clicked
-					const links = navLinks.querySelectorAll('a');
-					links.forEach(link => {
-						link.addEventListener('click', () => {
-							hamburger.classList.remove('active');
-							navLinks.classList.remove('active');
-							document.body.classList.remove('menu-open');
-						});
-					});
-				}
-			});
-		</script>
-	</head>
-	<body>
-		<header>
-			<nav>
-				<div class="logo">
-					<a href="/"><img src="/assets/logo.png" alt="Immortals Logo" height="60" /></a>
-				</div>
-				<button class="hamburger-menu" aria-label="Toggle navigation menu">
-					<span></span>
-					<span></span>
-					<span></span>
-				</button>
-				<ul class="nav-links">
-					<li><a href="/">Home</a></li>
-					<li><a href="/about">About</a></li>
-					<li><a href="/achievements">Achievements</a></li>
-					<li><a href="/news">News</a></li>
-					<li><a href="/gallery">Gallery</a></li>
-					<li><a href="/team">Team</a></li>
-					<li><a href="/contact">Contact</a></li>
-				</ul>
-			</nav>
-		</header>
-		<main>
-			<slot />
-		</main>
-		<footer>
-			<div class="footer-content">
-				<div class="footer-logo">
-					<img src="/assets/logo.png" alt="Immortals Logo" height="40" />
-					<p>© {new Date().getFullYear()} Immortals Robotics Team</p>
-				</div>
-				<div class="footer-links">
-					<a href="https://www.instagram.com/immortals.robotics" target="_blank" rel="noopener noreferrer">Instagram</a>
-					<a href="https://github.com/immortals-robotics" target="_blank" rel="noopener noreferrer">GitHub</a>
-				</div>
-			</div>
-		</footer>
-	</body>
+    <script is:inline>
+      // Runs before paint so there is no light/dark flash.
+      (() => {
+        let theme;
+        try {
+          theme = localStorage.getItem('theme');
+        } catch {}
+        if (theme !== 'light' && theme !== 'dark') {
+          theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="/" aria-label={`${SITE.fullName} home`}>
+          <Image src={logo} alt="" width={40} height={40} densities={[1, 2]} loading="eager" />
+          <span>{SITE.name}</span>
+        </a>
+
+        <nav class="site-nav" aria-label="Main">
+          <ul id="nav-links" class="nav-links">
+            {
+              NAV.map(({ href, label }) => (
+                <li>
+                  <a href={href} aria-current={isCurrent(href) ? 'page' : undefined}>
+                    {label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+
+        <div class="header-actions">
+          <button class="icon-btn theme-toggle" type="button" aria-label="Toggle dark mode">
+            <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+              <circle cx="12" cy="12" r="4.5" fill="currentColor"></circle>
+              <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M12 1.5v2.5M12 20v2.5M1.5 12H4M20 12h2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8"></path>
+              </g>
+            </svg>
+            <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+              <path fill="currentColor" d="M20.5 14.6A8.5 8.5 0 0 1 9.4 3.5a8.5 8.5 0 1 0 11.1 11.1Z"></path>
+            </svg>
+          </button>
+          <button
+            class="icon-btn menu-toggle"
+            type="button"
+            aria-label="Menu"
+            aria-controls="nav-links"
+            aria-expanded="false"
+          >
+            <span class="bars" aria-hidden="true"></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div class="footer-brand">
+          <Image src={logo} alt="" width={32} height={32} densities={[1, 2]} />
+          <div>
+            <strong>{SITE.fullName}</strong>
+            <p>{SITE.tagline}</p>
+          </div>
+        </div>
+        <ul class="footer-links">
+          {SOCIALS.map(({ href, label }) => (
+            <li><a href={href} rel="noopener">{label}</a></li>
+          ))}
+          <li><a href={`mailto:${SITE.email}`}>Email</a></li>
+        </ul>
+        <p class="copyright">© {new Date().getFullYear()} {SITE.fullName}</p>
+      </div>
+    </footer>
+
+    <script>
+      const root = document.documentElement;
+
+      document.querySelector('.theme-toggle')?.addEventListener('click', () => {
+        const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+        root.dataset.theme = next;
+        try {
+          localStorage.setItem('theme', next);
+        } catch {}
+      });
+
+      // Follow OS changes unless the visitor picked a theme explicitly.
+      matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        let stored = null;
+        try {
+          stored = localStorage.getItem('theme');
+        } catch {}
+        if (!stored) root.dataset.theme = e.matches ? 'dark' : 'light';
+      });
+
+      const menuBtn = document.querySelector<HTMLButtonElement>('.menu-toggle')!;
+      const setMenu = (open: boolean) => {
+        menuBtn.setAttribute('aria-expanded', String(open));
+        document.body.classList.toggle('menu-open', open);
+      };
+      menuBtn.addEventListener('click', () => setMenu(menuBtn.getAttribute('aria-expanded') !== 'true'));
+      document.getElementById('nav-links')?.addEventListener('click', (e) => {
+        if ((e.target as Element).closest('a')) setMenu(false);
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') setMenu(false);
+      });
+      matchMedia('(min-width: 961px)').addEventListener('change', (e) => e.matches && setMenu(false));
+    </script>
+  </body>
 </html>
 
-<style is:global>
-	:root {
-		--primary: #000000; /* Black */
-		--secondary: #004146; /* Dark Teal */
-		--accent: #018076; /* Medium Teal */
-		--highlight: #03BFB5; /* Light Teal */
-		--medium-gray: #949398; /* Medium Gray */
-		--light: #EFF5F9; /* Light Gray */
-	}
-	
-	* {
-		margin: 0;
-		padding: 0;
-		box-sizing: border-box;
-	}
-	
-	html, body {
-		font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-		background-color: var(--light);
-		color: var(--primary);
-		line-height: 1.6;
-	}
-	
-	a {
-		color: var(--highlight);
-		text-decoration: none;
-		transition: all 0.3s ease;
-	}
-	
-	a:hover {
-		text-decoration: underline;
-	}
-	
-	header {
-		background-color: var(--primary);
-		padding: 1rem 2rem;
-		box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-	}
-	
-	nav {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		max-width: 1200px;
-		margin: 0 auto;
-	}
-	
-	.nav-links {
-		display: flex;
-		list-style: none;
-		gap: 1.5rem;
-	}
-	
-	.nav-links a {
-		color: var(--light);
-		font-weight: 500;
-	}
-	
-	.nav-links a:hover {
-		color: var(--highlight);
-	}
-	
-	main {
-		max-width: 1200px;
-		margin: 0 auto;
-		padding: 2rem;
-		min-height: calc(100vh - 160px);
-	}
-	
-	footer {
-		background-color: var(--primary);
-		color: var(--light);
-		padding: 1.5rem 2rem;
-	}
-	
-	.footer-content {
-		max-width: 1200px;
-		margin: 0 auto;
-	}
-	
-	.footer-logo {
-		display: flex;
-		align-items: center;
-		gap: 1rem;
-	}
+<style>
+  .skip-link {
+    position: absolute;
+    top: -100px;
+    left: 1rem;
+    z-index: 100;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    background: var(--accent-bg);
+    color: var(--on-accent);
+  }
 
-	.footer-links {
-		display: flex;
-		gap: 1.5rem;
-		margin-top: 0.75rem;
-	}
+  .skip-link:focus {
+    top: 0.5rem;
+  }
 
-	.footer-links a {
-		color: var(--highlight);
-		font-size: 0.95rem;
-	}
-	
-	h1, h2, h3, h4, h5, h6 {
-		color: var(--secondary);
-		margin-bottom: 1rem;
-	}
-	
-	p {
-		margin-bottom: 1rem;
-	}
-	
-	img {
-		max-width: 100%;
-	}
-	
-	.btn {
-		display: inline-block;
-		background-color: var(--accent);
-		color: white;
-		padding: 0.5rem 1.5rem;
-		border-radius: 4px;
-		font-weight: 500;
-		transition: all 0.3s ease;
-	}
-	
-	.btn:hover {
-		background-color: var(--secondary);
-		text-decoration: none;
-	}
-	
-	/* Hamburger menu styles */
-	.hamburger-menu {
-		display: none;
-		background: none;
-		border: none;
-		cursor: pointer;
-		padding: 0;
-		z-index: 10;
-	}
-	
-	.hamburger-menu span {
-		display: block;
-		width: 25px;
-		height: 3px;
-		background-color: var(--light);
-		margin: 5px 0;
-		transition: all 0.3s ease;
-		border-radius: 3px;
-	}
-	
-	@media (max-width: 768px) {
-		nav {
-			justify-content: space-between;
-			position: relative;
-		}
-		
-		.hamburger-menu {
-			display: block;
-		}
-		
-		.nav-links {
-			position: fixed;
-			top: 0;
-			right: -100%;
-			width: 70%;
-			max-width: 300px;
-			height: 100vh;
-			background-color: var(--primary);
-			flex-direction: column;
-			padding: 80px 30px 30px;
-			transition: right 0.3s ease;
-			box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
-			z-index: 5;
-			justify-content: flex-start;
-			align-items: flex-start;
-		}
-		
-		.nav-links.active {
-			right: 0;
-		}
-		
-		.nav-links li {
-			width: 100%;
-			margin-bottom: 1.5rem;
-		}
-		
-		.nav-links a {
-			display: block;
-			font-size: 1.1rem;
-		}
-		
-		/* Hamburger menu animation */
-		.hamburger-menu.active span:nth-child(1) {
-			transform: rotate(45deg) translate(5px, 5px);
-		}
-		
-		.hamburger-menu.active span:nth-child(2) {
-			opacity: 0;
-		}
-		
-		.hamburger-menu.active span:nth-child(3) {
-			transform: rotate(-45deg) translate(7px, -7px);
-		}
-		
-		/* Prevent scrolling when menu is open */
-		body.menu-open {
-			overflow: hidden;
-		}
-	}
+  /* ---------- Header ---------- */
+
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    border-bottom: 1px solid var(--border);
+    background: var(--header-bg);
+    backdrop-filter: saturate(1.4) blur(10px);
+    -webkit-backdrop-filter: saturate(1.4) blur(10px);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    height: var(--header-h);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--heading);
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .brand:hover {
+    color: var(--heading);
+  }
+
+  .brand img {
+    border-radius: 50%;
+  }
+
+  .site-nav {
+    margin-left: auto;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 0.25rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .nav-links a {
+    display: block;
+    padding: 0.4rem 0.7rem;
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .nav-links a:hover {
+    background: var(--surface-2);
+    color: var(--heading);
+  }
+
+  .nav-links a[aria-current='page'] {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  .icon-btn {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    background: none;
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  .icon-btn:hover {
+    border-color: var(--border);
+    background: var(--surface-2);
+  }
+
+  :global([data-theme='dark']) .icon-moon,
+  :global([data-theme='light']) .icon-sun {
+    display: none;
+  }
+
+  .menu-toggle {
+    display: none;
+  }
+
+  .bars,
+  .bars::before,
+  .bars::after {
+    display: block;
+    width: 20px;
+    height: 2px;
+    border-radius: 2px;
+    background: currentColor;
+    transition: transform 0.2s, background-color 0.2s;
+  }
+
+  .bars {
+    position: relative;
+  }
+
+  .bars::before,
+  .bars::after {
+    content: '';
+    position: absolute;
+    left: 0;
+  }
+
+  .bars::before {
+    top: -6px;
+  }
+
+  .bars::after {
+    top: 6px;
+  }
+
+  [aria-expanded='true'] .bars {
+    background: transparent;
+  }
+
+  [aria-expanded='true'] .bars::before {
+    transform: translateY(6px) rotate(45deg);
+  }
+
+  [aria-expanded='true'] .bars::after {
+    transform: translateY(-6px) rotate(-45deg);
+  }
+
+  @media (max-width: 960px) {
+    .menu-toggle {
+      display: grid;
+    }
+
+    .header-actions {
+      margin-left: auto;
+    }
+
+    .site-nav {
+      position: fixed;
+      inset: var(--header-h) 0 auto 0;
+      max-height: calc(100dvh - var(--header-h));
+      overflow-y: auto;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      box-shadow: var(--shadow-lg);
+      visibility: hidden;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
+    }
+
+    :global(body.menu-open) .site-nav {
+      visibility: visible;
+      opacity: 1;
+      transform: none;
+    }
+
+    .nav-links {
+      flex-direction: column;
+      padding: 0.75rem var(--gutter) 1.25rem;
+    }
+
+    .nav-links a {
+      padding: 0.75rem 0.5rem;
+      font-size: 1.05rem;
+    }
+  }
+
+  /* ---------- Footer ---------- */
+
+  .site-footer {
+    margin-top: clamp(3rem, 8vw, 5rem);
+    padding-block: 2rem;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+
+  .footer-inner {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem 2rem;
+    align-items: center;
+  }
+
+  .footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .footer-brand img {
+    border-radius: 50%;
+  }
+
+  .footer-brand strong {
+    color: var(--heading);
+  }
+
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .copyright {
+    grid-column: 1 / -1;
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 600px) {
+    .footer-inner {
+      grid-template-columns: 1fr;
+    }
+  }
 </style>

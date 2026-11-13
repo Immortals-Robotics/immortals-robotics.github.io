@@ -1,0 +1,398 @@
+/*
+  Global styles: design tokens (light + dark), base elements and a handful of
+  shared building blocks. Page-specific styles live in each page/component's
+  scoped <style>. Always use the tokens below; never hard-code colours.
+
+  Theme selection: <html data-theme="light|dark"> is set before first paint by
+  the inline script in Layout.astro (stored choice, else the OS preference).
+  The prefers-color-scheme block is the no-JS fallback.
+
+  Brand palette (docs/brand-colors.png): #004146 #018076 #03BFB5 #949398 #EFF5F9
+*/
+
+:root {
+  color-scheme: light;
+
+  --bg: #f4f8fa;
+  --surface: #ffffff;
+  --surface-2: #e9f0f3;
+  --border: #d6e1e5;
+  --text: #0b1416;
+  --text-muted: #4a5a5e;
+  --heading: #00343a;
+
+  --accent: #00756c;          /* links / accent text — 5.2:1 on --bg */
+  --accent-strong: #004146;   /* hover */
+  --accent-bg: #00756c;       /* filled buttons */
+  --on-accent: #ffffff;
+  --accent-soft: #d5efed;     /* tinted backgrounds, chips */
+
+  --header-bg: rgb(255 255 255 / 0.85);
+  --shadow: 0 1px 2px rgb(0 40 45 / 0.06), 0 4px 16px rgb(0 40 45 / 0.08);
+  --shadow-lg: 0 2px 4px rgb(0 40 45 / 0.08), 0 12px 32px rgb(0 40 45 / 0.14);
+
+  --gold: #b58500;
+  --silver: #6b7780;
+  --bronze: #a0582a;
+
+  --radius: 10px;
+  --radius-sm: 6px;
+  --max-w: 1200px;
+  --gutter: clamp(1rem, 4vw, 2rem);
+  --header-h: 64px;
+
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', Consolas, monospace;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg: #0a0f10;
+  --surface: #121a1c;
+  --surface-2: #182326;
+  --border: #243235;
+  --text: #e8f0f2;
+  --text-muted: #9aaaae;
+  --heading: #f2f8f9;
+
+  --accent: #03bfb5;          /* 8.4:1 on --bg */
+  --accent-strong: #5fe0d8;
+  --accent-bg: #03bfb5;
+  --on-accent: #00201e;
+  --accent-soft: #0b2e2d;
+
+  --header-bg: rgb(10 15 16 / 0.85);
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 16px rgb(0 0 0 / 0.35);
+  --shadow-lg: 0 2px 4px rgb(0 0 0 / 0.5), 0 12px 32px rgb(0 0 0 / 0.5);
+
+  --gold: #e8b923;
+  --silver: #c3ccd2;
+  --bronze: #d98b55;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+    --bg: #0a0f10;
+    --surface: #121a1c;
+    --surface-2: #182326;
+    --border: #243235;
+    --text: #e8f0f2;
+    --text-muted: #9aaaae;
+    --heading: #f2f8f9;
+    --accent: #03bfb5;
+    --accent-strong: #5fe0d8;
+    --accent-bg: #03bfb5;
+    --on-accent: #00201e;
+    --accent-soft: #0b2e2d;
+    --header-bg: rgb(10 15 16 / 0.85);
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 16px rgb(0 0 0 / 0.35);
+    --shadow-lg: 0 2px 4px rgb(0 0 0 / 0.5), 0 12px 32px rgb(0 0 0 / 0.5);
+    --gold: #e8b923;
+    --silver: #c3ccd2;
+    --bronze: #d98b55;
+  }
+}
+
+/* ---------- Reset / base ---------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--header-h) + 1rem);
+}
+
+body {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+main {
+  flex: 1;
+}
+
+img,
+picture,
+video,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: var(--heading);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+}
+
+h2 {
+  font-size: clamp(1.5rem, 3.5vw, 2rem);
+}
+
+h3 {
+  font-size: 1.25rem;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+a {
+  color: var(--accent);
+  text-underline-offset: 0.15em;
+}
+
+a:hover {
+  color: var(--accent-strong);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+::selection {
+  background: var(--accent-bg);
+  color: var(--on-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- Layout helpers ---------- */
+
+.container {
+  width: 100%;
+  max-width: var(--max-w);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.container-narrow {
+  width: 100%;
+  max-width: 760px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section {
+  padding-block: clamp(2.5rem, 7vw, 5rem);
+}
+
+.section-alt {
+  background: var(--surface-2);
+}
+
+/* Small uppercase label above a heading. */
+.eyebrow {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.page-header {
+  padding-block: clamp(2rem, 6vw, 3.5rem) clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.page-header p {
+  max-width: 65ch;
+  margin-top: 0.75rem;
+  color: var(--text-muted);
+  font-size: 1.125rem;
+}
+
+.muted {
+  color: var(--text-muted);
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------- Buttons ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.3rem;
+  border: 2px solid var(--accent-bg);
+  border-radius: var(--radius-sm);
+  background: var(--accent-bg);
+  color: var(--on-accent);
+  font: inherit;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transition: filter 0.15s, background-color 0.15s, color 0.15s;
+}
+
+.btn:hover {
+  color: var(--on-accent);
+  filter: brightness(1.1);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--accent);
+}
+
+.btn-ghost:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+  filter: none;
+}
+
+/* ---------- Cards ---------- */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+a.card {
+  color: inherit;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+a.card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent);
+  box-shadow: var(--shadow-lg);
+}
+
+.card-media {
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--surface-2);
+}
+
+.card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.25rem;
+}
+
+.card-body p {
+  color: var(--text-muted);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: clamp(1rem, 3vw, 1.5rem);
+}
+
+/* Small rounded label. */
+.chip {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* ---------- Long-form text (Markdown bodies) ---------- */
+
+.prose {
+  font-size: 1.0625rem;
+}
+
+.prose > * + * {
+  margin-top: 1.1em;
+}
+
+.prose h2 {
+  margin-top: 2em;
+}
+
+.prose h3 {
+  margin-top: 1.6em;
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.4em;
+}
+
+.prose li + li {
+  margin-top: 0.3em;
+}
+
+.prose img {
+  border-radius: var(--radius);
+}
+
+.prose blockquote {
+  padding-left: 1em;
+  border-left: 3px solid var(--accent);
+  color: var(--text-muted);
+}
+
+.prose code {
+  padding: 0.1em 0.3em;
+  border-radius: 4px;
+  background: var(--surface-2);
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}

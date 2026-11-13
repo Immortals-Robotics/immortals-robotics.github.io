@@ -1,0 +1,26 @@
+# Papers, Team Description Papers (TDPs), theses, talks and software releases.
+# Schema: src/content.config.ts (publications). kind: tdp | etdp | paper | thesis | talk | software | other
+# TODO(content pass): these three were listed on the old Achievements page with
+# no authors/venue/link and look like placeholders. Replace with the real TDP
+# archive (one `tdp` entry per year with a PDF url) and real papers.
+
+- id: path-planning-2022
+  title: Advanced Path Planning for Multi-Robot Systems
+  year: 2022
+  kind: paper
+
+- id: ball-detection-2020
+  title: Vision-Based Ball Detection in Dynamic Environments
+  year: 2020
+  kind: paper
+
+- id: strategy-optimization-2019
+  title: Real-time Strategy Optimization for Robot Soccer
+  year: 2019
+  kind: paper
+
+- id: immortals-github
+  title: Immortals open-source code on GitHub
+  year: 2025 # TODO: set to the year of the release you want to highlight
+  kind: software
+  url: https://github.com/immortals-robotics
