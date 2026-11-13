@@ -1,0 +1,58 @@
+---
+// Final placing as a badge. 1st-3rd get a medal-coloured disc; the text always
+// states the place so colour is never the only cue.
+interface Props {
+  place: number;
+}
+
+const { place } = Astro.props;
+const suffix = place % 100 >= 11 && place % 100 <= 13 ? 'th' : ({ 1: 'st', 2: 'nd', 3: 'rd' }[place % 10] ?? 'th');
+const medal = ({ 1: 'gold', 2: 'silver', 3: 'bronze' } as const)[place];
+---
+
+<span class:list={['place', medal]}>
+  <span class="disc" aria-hidden="true">{place}</span>
+  {place}{suffix} place
+</span>
+
+<style>
+  .place {
+    --medal: var(--text-muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.2rem 0.75rem 0.2rem 0.25rem;
+    border: 1px solid var(--medal);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--heading);
+    font-size: 0.9rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .gold {
+    --medal: var(--gold);
+  }
+
+  .silver {
+    --medal: var(--silver);
+  }
+
+  .bronze {
+    --medal: var(--bronze);
+  }
+
+  .disc {
+    display: grid;
+    place-items: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 50%;
+    background: var(--medal);
+    color: var(--surface);
+    font-size: 0.8rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+</style>

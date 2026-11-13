@@ -1,0 +1,59 @@
+---
+// One post in the news list. Posts without a cover get a text-only card.
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import FormattedDate from '../FormattedDate.astro';
+
+interface Props {
+  post: CollectionEntry<'news'>;
+}
+
+const { post } = Astro.props;
+const { title, date, summary, cover, coverAlt } = post.data;
+---
+
+<a class="card news-card" href={`/news/${post.id}/`}>
+  {
+    cover && (
+      <div class="card-media">
+        <Image
+          src={cover}
+          alt={coverAlt ?? ''}
+          width={800}
+          widths={[400, 600, 800]}
+          sizes="(min-width: 1200px) 370px, (min-width: 700px) 45vw, 100vw"
+        />
+      </div>
+    )
+  }
+  <div class="card-body">
+    <span class="date"><FormattedDate date={date} /></span>
+    <h2>{title}</h2>
+    <p>{summary}</p>
+    <span class="more" aria-hidden="true">Read more →</span>
+  </div>
+</a>
+
+<style>
+  .news-card .card-media img {
+    /* Covers are often portrait trophy shots; keep the upper-middle in frame. */
+    object-position: 50% 35%;
+  }
+
+  .date {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+  }
+
+  .more {
+    margin-top: auto;
+    padding-top: 0.25rem;
+    color: var(--accent);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+</style>

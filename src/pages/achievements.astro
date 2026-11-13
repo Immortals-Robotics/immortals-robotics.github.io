@@ -1,8 +1,198 @@
 ---
-// STUB: replaced by a sub-agent.
+import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
+import PlaceBadge from '../components/achievements/PlaceBadge.astro';
+
+const results = (await getCollection('achievements')).map((entry) => entry.data);
+
+// Group by year, newest first. Within a year, keep the file's order.
+const years = [...new Set(results.map((r) => r.year))].sort((a, b) => b - a);
+const byYear = years.map((year) => ({ year, results: results.filter((r) => r.year === year) }));
+
+const podiums = results.filter((r) => r.place && r.place <= 3);
+const firstYear = Math.min(...years);
+const stats = [
+  { value: podiums.length, label: 'Podium finishes' },
+  { value: results.length, label: 'Competitions listed' },
+  { value: firstYear, label: 'Competing since' },
+];
 ---
 
-<Layout title="Achievements">
-  <div class="container page-header"><h1>Achievements</h1></div>
+<Layout
+  title="Achievements"
+  description="Competition results of the Immortals RoboCup Small Size League team, year by year."
+>
+  <header class="container page-header">
+    <span class="eyebrow">Achievements</span>
+    <h1>Results by year</h1>
+    <p>Our record in the RoboCup Small Size League, from our first appearance in {firstYear} to today.</p>
+
+    <dl class="stats">
+      {
+        stats.map(({ value, label }) => (
+          <div>
+            <dt>{label}</dt>
+            <dd>{value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </header>
+
+  <section class="container" aria-label="Results timeline">
+    <ol class="timeline" role="list">
+      {
+        byYear.map(({ year, results }) => (
+          <li class="year">
+            <h2 id={`y${year}`}>{year}</h2>
+            <ul class="results" role="list">
+              {results.map((r) => (
+                <li class:list={['result', r.place && r.place <= 3 && 'podium']}>
+                  <div class="result-main">
+                    <h3>{r.event}</h3>
+                    {(r.location || r.division) && (
+                      <p class="meta">{[r.location, r.division].filter(Boolean).join(' · ')}</p>
+                    )}
+                    {r.awards.length > 0 && (
+                      <ul class="awards" role="list" aria-label="Awards">
+                        {r.awards.map((award) => (
+                          <li class="chip">{award}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                  <div class="result-outcome">
+                    {r.place && <PlaceBadge place={r.place} />}
+                    {r.result && <span class="result-text">{r.result}</span>}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
 </Layout>
+
+<style>
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 11rem));
+    gap: clamp(0.5rem, 2vw, 1rem);
+    margin-top: 2rem;
+  }
+
+  .stats > div {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    padding: clamp(0.75rem, 2vw, 1rem) clamp(0.75rem, 2.5vw, 1.25rem);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+  }
+
+  .stats dt {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .stats dd {
+    color: var(--heading);
+    font-size: clamp(1.5rem, 5vw, 2rem);
+    font-weight: 800;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- Timeline ---------- */
+
+  .timeline {
+    padding: 0;
+    list-style: none;
+  }
+
+  .year {
+    display: grid;
+    grid-template-columns: 6rem 1fr;
+    gap: 1.5rem;
+    padding-block: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .year h2 {
+    position: sticky;
+    top: calc(var(--header-h) + 1rem);
+    align-self: start;
+    color: var(--accent);
+    font-size: 1.75rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .results {
+    display: grid;
+    gap: 0.75rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .result {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1.5rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+  }
+
+  .result.podium {
+    box-shadow: var(--shadow);
+  }
+
+  .result h3 {
+    font-size: 1.125rem;
+  }
+
+  .meta {
+    margin-top: 0.15rem;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+
+  .awards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.6rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .result-outcome {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+  }
+
+  .result-text {
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  @media (max-width: 640px) {
+    .year {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    .year h2 {
+      position: static;
+      font-size: 1.5rem;
+    }
+  }
+</style>

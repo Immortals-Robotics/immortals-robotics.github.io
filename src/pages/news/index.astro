@@ -1,8 +1,42 @@
 ---
-// STUB: replaced by a sub-agent.
+import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
+import NewsCard from '../../components/news/NewsCard.astro';
+
+const posts = (await getCollection('news', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
 ---
 
-<Layout title="News">
-  <div class="container page-header"><h1>News</h1></div>
+<Layout title="News" description="News and competition reports from the Immortals RoboCup Small Size League team.">
+  <header class="container page-header">
+    <span class="eyebrow">News</span>
+    <h1>Latest from the team</h1>
+    <p>Competition reports, results and updates from Immortals.</p>
+  </header>
+
+  <section class="container" aria-label="Posts">
+    {
+      posts.length > 0 ? (
+        <ul class="grid posts" role="list">
+          {posts.map((post) => (
+            <li>
+              <NewsCard post={post} />
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="muted">No posts yet. Check back after the next competition.</p>
+      )
+    }
+  </section>
 </Layout>
+
+<style>
+  /* Cards keep their natural height so a text-only card doesn't stretch to match a cover card. */
+  .posts {
+    align-items: start;
+    padding: 0;
+    list-style: none;
+  }
+</style>
