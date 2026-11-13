@@ -1,8 +1,348 @@
 ---
-// STUB: replaced by a sub-agent.
+import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
+import lineupField from '../assets/robots/lineup-field.jpg';
+import lineupRow from '../assets/robots/lineup-row.jpg';
+import robocup2011 from '../assets/gallery/robocup-2011/team-photo.jpg';
+import trio from '../assets/robots/trio-with-ball.jpg';
+import awardCeremony from '../assets/gallery/german-open-2024/award-ceremony.jpg';
+import robocup2024 from '../assets/gallery/robocup-2024/with-roboteam-twente.jpg';
+
+// Milestones from the team's own history text; achievements has the full record.
+const milestones = [
+  { year: 2008, text: 'Team founded; first generation of robots built' },
+  { year: 2009, text: 'International debut at RoboCup 2009 in Graz, Austria' },
+  { year: 2011, text: '2nd place at RoboCup 2011 in Istanbul, Turkey' },
+  { year: 2023, text: '3rd place at RoboCup 2023 in Bordeaux, France' },
+];
+
+const sslFacts = [
+  { value: 'Up to 11', label: 'robots per team' },
+  { value: '18 cm', label: 'maximum robot diameter' },
+  { value: '15 cm', label: 'maximum robot height' },
+  { value: 'Overhead', label: 'cameras track ball and robots' },
+];
+
+const explore = [
+  {
+    href: '/robots/',
+    title: 'Robots',
+    text: 'How our robots move, see and play.',
+    image: trio,
+    alt: 'Three Immortals robots with colour-marker tops next to an orange golf ball',
+  },
+  {
+    href: '/achievements/',
+    title: 'Achievements',
+    text: 'Our competition results, year by year.',
+    image: awardCeremony,
+    alt: 'Award ceremony in front of the RoboCup German Open 2024 backdrop',
+  },
+  {
+    href: '/gallery/',
+    title: 'Gallery',
+    text: 'Photos from competitions and behind the scenes.',
+    image: robocup2024,
+    alt: 'Immortals and RoboTeam Twente together on the field with their robots',
+  },
+];
 ---
 
-<Layout title="About">
-  <div class="container page-header"><h1>About</h1></div>
+<Layout
+  title="About"
+  description="The story of Immortals, a RoboCup Small Size League team founded in 2008, and what the Small Size League is."
+>
+  <header class="container page-header">
+    <span class="eyebrow">About us</span>
+    <h1>The Immortals SSL team</h1>
+    <p>
+      Immortals is a RoboCup Small Size League team, founded in 2008. Since our first RoboCup in
+      2009 we have grown into one of the most competitive teams in the league.
+    </p>
+  </header>
+
+  <div class="container">
+    <Image
+      class="hero"
+      src={lineupField}
+      alt="A line-up of Immortals robots with colour-marker tops on the green competition field"
+      width={1280}
+      widths={[600, 900, 1280]}
+      sizes="(min-width: 1200px) 1136px, 100vw"
+      loading="eager"
+    />
+  </div>
+
+  <section class="section">
+    <div class="container split">
+      <div class="story">
+        <h2>Our story</h2>
+        <p>
+          Immortals started in 2008 as a small group of passionate engineers building our first
+          generation of robots. After months of hard work, we were ready for our international
+          debut at RoboCup 2009 in Graz, Austria.
+        </p>
+        <p>
+          Continuous improvement led to our first major result: 2nd place at RoboCup 2011 in
+          Istanbul, Turkey. It was a pivotal moment that established us as serious contenders in the
+          Small Size League. More recently, we finished 3rd at RoboCup 2023 in Bordeaux, France,
+          showing that we can keep performing and innovating at the top level.
+        </p>
+
+        <ol class="milestones" role="list">
+          {
+            milestones.map(({ year, text }) => (
+              <li>
+                <span class="milestone-year">{year}</span>
+                <span>{text}</span>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+
+      <figure class="photo">
+        <Image
+          src={robocup2011}
+          alt="Teams posing in front of the RoboCup 2011 backdrop"
+          width={640}
+          widths={[320, 640]}
+          sizes="(min-width: 900px) 520px, 100vw"
+        />
+        <figcaption>RoboCup 2011, Istanbul</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section section-alt" aria-labelledby="ssl-heading">
+    <div class="container split">
+      <div>
+        <span class="eyebrow">The league</span>
+        <h2 id="ssl-heading">What is the Small Size League?</h2>
+        <p>
+          The RoboCup Small Size League (SSL) is a robotics competition in which teams of fully
+          autonomous robots play soccer against each other on a green carpeted field.
+        </p>
+        <p>
+          Nobody steers the robots during a game. Cameras mounted above the field track the ball
+          and every robot, and each team's software makes its own decisions from that information.
+        </p>
+
+        <dl class="facts">
+          {
+            sslFacts.map(({ value, label }) => (
+              <div>
+                <dt>{label}</dt>
+                <dd>{value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+
+      <figure class="photo">
+        <Image
+          src={lineupRow}
+          alt="A row of Immortals robots lined up along the edge of the green field"
+          width={1280}
+          widths={[400, 800, 1280]}
+          sizes="(min-width: 900px) 520px, 100vw"
+        />
+      </figure>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="tech-heading">
+    <div class="container">
+      <h2 id="tech-heading">Our technology</h2>
+      <ul class="tech" role="list">
+        <li>High-precision omnidirectional movement</li>
+        <li>Advanced vision processing algorithms</li>
+        <li>Real-time strategic decision making</li>
+        <li>Robust inter-robot communication</li>
+      </ul>
+
+      <h2 class="explore-heading">Keep exploring</h2>
+      <ul class="grid explore" role="list">
+        {
+          explore.map(({ href, title, text, image, alt }) => (
+            <li>
+              <a class="card" href={href}>
+                <div class="card-media">
+                  <Image
+                    src={image}
+                    alt={alt}
+                    width={800}
+                    widths={[400, 600, 800]}
+                    sizes="(min-width: 1200px) 370px, (min-width: 700px) 45vw, 100vw"
+                  />
+                </div>
+                <div class="card-body">
+                  <h3>{title} →</h3>
+                  <p>{text}</p>
+                </div>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
 </Layout>
+
+<style>
+  .hero {
+    width: 100%;
+    aspect-ratio: 21 / 9;
+    object-fit: cover;
+    object-position: 50% 45%;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+
+  .split {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+  }
+
+  .split p {
+    margin-top: 1rem;
+    max-width: 62ch;
+  }
+
+  .split h2 + p {
+    margin-top: 1.25rem;
+  }
+
+  .photo img {
+    width: 100%;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+
+  .photo figcaption {
+    margin-top: 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  /* ---------- Milestones ---------- */
+
+  .milestones {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 2rem;
+    padding: 0 0 0 1.25rem;
+    border-left: 2px solid var(--border);
+    list-style: none;
+  }
+
+  .milestones li {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+  }
+
+  .milestones li::before {
+    content: '';
+    position: absolute;
+    top: 0.5em;
+    left: calc(-1.25rem - 6px);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .milestone-year {
+    min-width: 3rem;
+    color: var(--accent);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- SSL facts ---------- */
+
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-top: 1.75rem;
+  }
+
+  .facts > div {
+    display: flex;
+    flex-direction: column-reverse;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+  }
+
+  .facts dt {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .facts dd {
+    color: var(--heading);
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  /* ---------- Technology + explore ---------- */
+
+  .tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1.25rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tech li {
+    padding: 0.5rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+  }
+
+  .explore-heading {
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+    margin-bottom: 1.25rem;
+  }
+
+  .explore {
+    padding: 0;
+    list-style: none;
+  }
+
+  .explore > li {
+    display: flex;
+  }
+
+  .explore .card {
+    flex: 1;
+  }
+
+  @media (max-width: 860px) {
+    .split {
+      grid-template-columns: 1fr;
+    }
+
+    .hero {
+      aspect-ratio: 4 / 3;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .facts {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

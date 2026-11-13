@@ -1,8 +1,215 @@
 ---
-// STUB: replaced by a sub-agent.
 import Layout from '../layouts/Layout.astro';
+import { SITE, SOCIALS } from '../data/site';
+
+const mailto = (subject?: string) =>
+  `mailto:${SITE.email}${subject ? `?subject=${encodeURIComponent(subject)}` : ''}`;
+
+const skills = [
+  'Computer Engineering',
+  'Electrical Engineering',
+  'Mechanical Engineering',
+  'Computer Vision',
+  'Machine Learning',
+  'Strategy & AI',
+];
+
+const sponsorship = [
+  'Develop new robot prototypes',
+  'Travel to international competitions',
+  'Purchase specialised equipment',
+  'Fund research activities',
+];
 ---
 
-<Layout title="Contact">
-  <div class="container page-header"><h1>Contact</h1></div>
+<Layout
+  title="Contact"
+  description="Get in touch with the Immortals RoboCup team: questions, joining the team, or sponsorship."
+>
+  <header class="container page-header intro">
+    <div>
+      <span class="eyebrow">Contact</span>
+      <h1>Get in touch</h1>
+      <p>
+        Want to know more about Immortals, our robots or taking part in RoboCup? We'd love to hear
+        from you.
+      </p>
+      <p class="cta">
+        <a class="btn" href={mailto()}>Email us</a>
+      </p>
+    </div>
+
+    <ul class="channels" role="list">
+      <li>
+        <span class="channel-label">Email</span>
+        <a href={mailto()}>{SITE.email}</a>
+      </li>
+      {
+        SOCIALS.map(({ href, label }) => (
+          <li>
+            <span class="channel-label">{label}</span>
+            <a href={href} rel="noopener">
+              {href.replace(/^https?:\/\/(www\.)?/, '')}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </header>
+
+  <section class="section section-alt">
+    <div class="container panels">
+      <article id="join" class="panel">
+        <span class="eyebrow">Join the team</span>
+        <h2>Build robots with us</h2>
+        <p>
+          Passionate about robotics? We're always looking for talented people with skills in:
+        </p>
+        <ul class="skills" role="list">
+          {skills.map((skill) => <li class="chip">{skill}</li>)}
+        </ul>
+        <p>Send us your CV and a short introduction.</p>
+        <p class="panel-cta">
+          <a class="btn" href={mailto('Joining Immortals')}>Apply by email</a>
+        </p>
+      </article>
+
+      <article id="sponsor" class="panel">
+        <span class="eyebrow">Sponsor us</span>
+        <h2>Support our research</h2>
+        <p>
+          If your organisation would like to support robotics research and development, consider
+          sponsoring Immortals. Sponsorship helps us:
+        </p>
+        <ul class="checklist" role="list">
+          {sponsorship.map((item) => <li>{item}</li>)}
+        </ul>
+        <p>Get in touch to discuss sponsorship opportunities and benefits.</p>
+        <p class="panel-cta">
+          <a class="btn" href={mailto('Sponsoring Immortals')}>Talk to us about sponsorship</a>
+        </p>
+      </article>
+    </div>
+  </section>
 </Layout>
+
+<style>
+  .intro {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 2rem clamp(2rem, 6vw, 5rem);
+    align-items: center;
+  }
+
+  .cta {
+    margin-top: 1.5rem;
+  }
+
+  .channels {
+    display: grid;
+    gap: 0;
+    padding: 0.5rem 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    list-style: none;
+  }
+
+  .channels li {
+    display: flex;
+    flex-direction: column;
+    padding-block: 0.9rem;
+  }
+
+  .channels li + li {
+    border-top: 1px solid var(--border);
+  }
+
+  .channel-label {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .channels a {
+    font-size: 1.05rem;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+
+  /* ---------- Join / sponsor ---------- */
+
+  .panels {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
+    gap: clamp(1rem, 3vw, 1.5rem);
+  }
+
+  .panel {
+    display: flex;
+    flex-direction: column;
+    padding: clamp(1.25rem, 4vw, 2rem);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    scroll-margin-top: calc(var(--header-h) + 1rem);
+  }
+
+  .panel > p {
+    margin-top: 1rem;
+    color: var(--text-muted);
+  }
+
+  .skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .skills .chip {
+    font-size: 0.9rem;
+    padding: 0.3rem 0.8rem;
+  }
+
+  .checklist {
+    display: grid;
+    gap: 0.4rem;
+    margin-top: 1rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .checklist li {
+    position: relative;
+    padding-left: 1.6rem;
+  }
+
+  .checklist li::before {
+    content: '';
+    position: absolute;
+    top: 0.4em;
+    left: 0.2rem;
+    width: 0.4rem;
+    height: 0.75rem;
+    border: solid var(--accent);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  .panel .panel-cta {
+    margin-top: auto;
+    padding-top: 1.5rem;
+  }
+
+  @media (max-width: 860px) {
+    .intro {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

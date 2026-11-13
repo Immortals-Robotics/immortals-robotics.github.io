@@ -1,0 +1,106 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import Layout from '../../layouts/Layout.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+
+// URL contract: /news/<file name without .md>/
+export const getStaticPaths = (async () => {
+  const posts = await getCollection('news', ({ data }) => !data.draft);
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  post: CollectionEntry<'news'>;
+}
+
+const { post } = Astro.props;
+const { title, date, author, summary, cover, coverAlt } = post.data;
+const { Content } = await render(post);
+
+// Rendered width on desktop: the text column (712px), or less for portrait
+// covers, which are capped at 34rem (544px) tall below.
+const coverWidth = cover ? Math.round(Math.min(712, (544 * cover.width) / cover.height)) : 712;
+---
+
+<Layout title={title} description={summary} image={cover} type="article">
+  <article>
+    <header class="container-narrow page-header">
+      <a class="back" href="/news/">← All news</a>
+      <h1>{title}</h1>
+      <p class="meta">
+        <FormattedDate date={date} />
+        <span aria-hidden="true">·</span>
+        <span>{author}</span>
+      </p>
+    </header>
+
+    {
+      cover && (
+        <figure class="container-narrow cover">
+          <Image
+            src={cover}
+            alt={coverAlt ?? ''}
+            width={1400}
+            widths={[400, 700, 1000, 1400]}
+            sizes={`(min-width: 800px) ${coverWidth}px, 100vw`}
+            loading="eager"
+          />
+        </figure>
+      )
+    }
+
+    <div class="container-narrow prose">
+      <Content />
+    </div>
+
+    <footer class="container-narrow">
+      <div class="post-footer">
+        <a class="btn btn-ghost" href="/news/">← Back to all news</a>
+      </div>
+    </footer>
+  </article>
+</Layout>
+
+<style>
+  .back {
+    display: inline-block;
+    margin-bottom: 1.25rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .back:hover {
+    text-decoration: underline;
+  }
+
+  .page-header .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    font-size: 1rem;
+  }
+
+  /* Show the whole cover whatever its aspect ratio; portrait shots get a panel behind them. */
+  .cover {
+    margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .cover img {
+    width: auto;
+    max-height: min(70vh, 34rem);
+    margin-inline: auto;
+    border-radius: var(--radius);
+    background: var(--surface-2);
+    box-shadow: var(--shadow);
+  }
+
+  .post-footer {
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+</style>
