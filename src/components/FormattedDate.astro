@@ -1,0 +1,18 @@
+---
+// <time> with a consistent human format, e.g. "15 July 2023".
+interface Props {
+  date: Date;
+  /** "long" = 15 July 2023, "month" = July 2023 */
+  format?: 'long' | 'month';
+}
+
+const { date, format = 'long' } = Astro.props;
+const text = date.toLocaleDateString('en-GB', {
+  day: format === 'long' ? 'numeric' : undefined,
+  month: 'long',
+  year: 'numeric',
+  timeZone: 'UTC',
+});
+---
+
+<time datetime={date.toISOString().slice(0, 10)}>{text}</time>
