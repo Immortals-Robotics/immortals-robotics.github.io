@@ -1,0 +1,121 @@
+---
+// Six photos from the gallery: the first photo of each album (by album order),
+// then second photos, and so on.
+import { getCollection } from 'astro:content';
+import { Picture } from 'astro:assets';
+import SectionHead from './SectionHead.astro';
+
+const MAX = 6;
+const albums = (await getCollection('gallery')).sort((a, b) => a.data.order - b.data.order);
+const longest = Math.max(0, ...albums.map((a) => a.data.photos.length));
+
+const photos = [];
+for (let i = 0; i < longest && photos.length < MAX; i++) {
+  for (const album of albums) {
+    const photo = album.data.photos[i];
+    if (photo && photos.length < MAX) photos.push({ ...photo, album: album.data.title });
+  }
+}
+---
+
+{
+  photos.length > 0 && (
+    <section class="section section-alt" aria-labelledby="gallery-title">
+      <div class="container">
+        <SectionHead
+          id="gallery-title"
+          eyebrow="Gallery"
+          title="On the road with the team"
+          href="/gallery/"
+          linkLabel="Browse the gallery"
+        />
+        <ul class="mosaic">
+          {photos.map((photo, i) => (
+            <li>
+              <a href="/gallery/">
+                <Picture
+                  src={photo.src}
+                  formats={['avif', 'webp']}
+                  widths={i === 0 ? [480, 800, 1200] : [320, 480, 640]}
+                  sizes={
+                    i === 0
+                      ? '(min-width: 1200px) 760px, (min-width: 720px) 66vw, calc(100vw - 2rem)'
+                      : '(min-width: 1200px) 380px, (min-width: 720px) 33vw, 50vw'
+                  }
+                  alt={photo.alt}
+                />
+                <span class="tag">{photo.album}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .mosaic {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-auto-rows: clamp(150px, 17vw, 210px);
+    grid-auto-flow: dense;
+    gap: clamp(0.5rem, 1.5vw, 1rem);
+    padding: 0;
+    list-style: none;
+  }
+
+  .mosaic li:first-child {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+
+  .mosaic a {
+    position: relative;
+    display: block;
+    height: 100%;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: var(--surface);
+  }
+
+  .mosaic :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+  }
+
+  .mosaic a:hover :global(img) {
+    transform: scale(1.04);
+  }
+
+  .tag {
+    position: absolute;
+    bottom: 0.6rem;
+    left: 0.6rem;
+    max-width: calc(100% - 1.2rem);
+    overflow: hidden;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    color: var(--heading);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 720px) {
+    .mosaic {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-auto-rows: 38vw;
+    }
+
+    /* Keep the grid even: big tile + four small ones. */
+    .mosaic li:nth-child(n + 6) {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,131 @@
+---
+import { Picture } from 'astro:assets';
+import heroImage from '../../assets/robots/trio-with-ball.jpg';
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="container hero-inner">
+    <div class="hero-copy">
+      <span class="eyebrow">Immortals · RoboCup Small Size League</span>
+      <h1 id="hero-title">Autonomous robot soccer, since&nbsp;2008.</h1>
+      <p class="lede">
+        We design, build and program a squad of small, fast soccer robots, and have competed internationally since
+        RoboCup 2009.
+      </p>
+      <div class="actions">
+        <a class="btn" href="/robots/">Meet the robots</a>
+        <a class="btn btn-ghost" href="/contact/">Join or sponsor</a>
+      </div>
+    </div>
+
+    <div class="hero-media">
+      <svg class="field-lines" viewBox="0 0 600 400" aria-hidden="true">
+        <g fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="10" y="10" width="580" height="380" rx="4"></rect>
+          <line x1="300" y1="10" x2="300" y2="390"></line>
+          <circle cx="300" cy="200" r="60"></circle>
+          <path d="M10 130h70a10 10 0 0 1 10 10v120a10 10 0 0 1-10 10H10M590 130h-70a10 10 0 0 0-10 10v120a10 10 0 0 0 10 10h70"
+          ></path>
+        </g>
+      </svg>
+      <Picture
+        src={heroImage}
+        formats={['avif', 'webp']}
+        widths={[400, 640, 880, 1080]}
+        sizes="(min-width: 960px) 520px, calc(100vw - 2rem)"
+        alt="Three Immortals robots with colour-marker tops on the field, next to an orange golf ball"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(2.5rem, 7vw, 5rem);
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  /* Faint pitch markings centred behind the photo. */
+  .field-lines {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: -1;
+    width: 190%;
+    max-width: none;
+    color: var(--accent);
+    opacity: 0.14;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(2rem, 5vw, 4rem);
+  }
+
+  h1 {
+    font-size: clamp(2.25rem, 5.5vw, 3.75rem);
+    letter-spacing: -0.025em;
+  }
+
+  .lede {
+    max-width: 34rem;
+    margin-top: 1.25rem;
+    color: var(--text-muted);
+    font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  .hero-media {
+    position: relative;
+    z-index: 0;
+    justify-self: end;
+    width: 100%;
+    max-width: 520px;
+  }
+
+  .hero-media :global(img) {
+    width: 100%;
+    aspect-ratio: 1;
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) * 1.6);
+    box-shadow: var(--shadow-lg);
+    object-fit: cover;
+  }
+
+  @media (max-width: 860px) {
+    .hero-inner {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-media {
+      justify-self: stretch;
+      max-width: none;
+    }
+
+    .hero-media :global(img) {
+      aspect-ratio: 4 / 3;
+      object-position: 60% 45%;
+    }
+
+    /* Full-width photo leaves no room for the markings to read as a pitch. */
+    .field-lines {
+      display: none;
+    }
+  }
+</style>

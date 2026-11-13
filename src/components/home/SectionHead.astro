@@ -1,0 +1,48 @@
+---
+// Heading row for a home page section: eyebrow + h2 on the left, "see all" link on the right.
+interface Props {
+  id: string;
+  title: string;
+  eyebrow?: string;
+  href?: string;
+  linkLabel?: string;
+}
+
+const { id, title, eyebrow, href, linkLabel } = Astro.props;
+---
+
+<div class="section-head">
+  <div>
+    {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+    <h2 id={id}>{title}</h2>
+  </div>
+  {
+    href && (
+      <a class="more" href={href}>
+        {linkLabel}
+        <span aria-hidden="true">→</span>
+      </a>
+    )
+  }
+</div>
+
+<style>
+  .section-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0.75rem 2rem;
+    margin-bottom: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .more {
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .more:hover {
+    text-decoration: underline;
+  }
+</style>
