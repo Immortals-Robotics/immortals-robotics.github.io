@@ -1,11 +1,106 @@
 ---
+import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
+import { NAV } from '../data/site';
+import robots from '../assets/robots/trio-with-ball.jpg';
+
+const links = NAV.filter(({ href }) => ['/robots/', '/achievements/', '/news/', '/gallery/'].includes(href));
 ---
 
 <Layout title="Page not found">
-  <div class="container page-header">
-    <h1>404</h1>
-    <p>That page went out of bounds.</p>
-    <p><a class="btn" href="/">Back to the home page</a></p>
+  <div class="container not-found">
+    <div class="copy">
+      <span class="eyebrow">Error 404</span>
+      <h1>Ball out of bounds</h1>
+      <p>
+        The page you were looking for isn't on the field. It may have moved, or the link may have a typo.
+      </p>
+      <p class="actions">
+        <a class="btn" href="/">Back to the home page</a>
+      </p>
+      <nav aria-label="Popular pages">
+        <h2>Or try one of these</h2>
+        <ul role="list">
+          {
+            links.map(({ href, label }) => (
+              <li>
+                <a href={href}>{label}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </div>
+
+    <Image
+      class="photo"
+      src={robots}
+      alt="Three Immortals robots on the field, with the orange ball out of reach"
+      width={800}
+      widths={[400, 800]}
+      sizes="(min-width: 800px) 420px, min(420px, calc(100vw - 2rem))"
+      loading="eager"
+    />
   </div>
 </Layout>
+
+<style>
+  .not-found {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
+    gap: clamp(2rem, 6vw, 4rem);
+    align-items: center;
+    padding-block: clamp(2.5rem, 8vw, 5rem);
+  }
+
+  .copy > p {
+    max-width: 45ch;
+    margin-top: 1rem;
+    color: var(--text-muted);
+    font-size: 1.125rem;
+  }
+
+  .copy > .actions {
+    margin-top: 1.75rem;
+  }
+
+  nav {
+    margin-top: 2.25rem;
+  }
+
+  h2 {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    margin-top: 0.5rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  li a {
+    font-weight: 600;
+  }
+
+  .photo {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+  }
+
+  @media (max-width: 799px) {
+    .not-found {
+      grid-template-columns: 1fr;
+    }
+
+    .photo {
+      max-width: 420px;
+    }
+  }
+</style>

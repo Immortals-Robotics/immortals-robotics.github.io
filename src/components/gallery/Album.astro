@@ -1,0 +1,148 @@
+---
+// One gallery album: heading, meta line and a thumbnail grid.
+// Each thumbnail links to a large WebP so it works without JS; Lightbox.astro
+// upgrades these links (a[data-lightbox]) to an in-page viewer.
+import { Picture, getImage } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import FormattedDate from '../FormattedDate.astro';
+
+interface Props {
+  album: CollectionEntry<'gallery'>;
+}
+
+const { album } = Astro.props;
+const { title, date, description, photos } = album.data;
+
+// Large variant for the link/lightbox: long edge capped at 2000px, never upscaled.
+const LONG_EDGE = 2000;
+const items = await Promise.all(
+  photos.map(async (photo) => {
+    const { width: w, height: h } = photo.src;
+    const width = Math.round(w * Math.min(1, LONG_EDGE / Math.max(w, h)));
+    const large = await getImage({
+      src: photo.src,
+      width,
+      widths: width > 1000 ? [1000, width] : [width],
+      format: 'webp',
+    });
+    return { ...photo, large };
+  }),
+);
+---
+
+<section class="album" id={album.id} aria-labelledby={`${album.id}-title`}>
+  <header class="album-header">
+    <h2 id={`${album.id}-title`}>{title}</h2>
+    <p class="muted">
+      {date && <FormattedDate date={date} format="month" />}
+      {date && description && <span aria-hidden="true"> · </span>}
+      {description}
+      {(date || description) && <span aria-hidden="true"> · </span>}
+      {photos.length} {photos.length === 1 ? 'photo' : 'photos'}
+    </p>
+  </header>
+
+  <ul class="photos" role="list">
+    {
+      items.map(({ src, alt, caption, large }) => (
+        <li>
+          <figure>
+            <a
+              class="thumb"
+              href={large.src}
+              data-lightbox={album.id}
+              data-srcset={large.srcSet.attribute}
+              data-width={large.attributes.width}
+              data-height={large.attributes.height}
+              data-caption={caption}
+            >
+              <Picture
+                src={src}
+                alt={alt}
+                formats={['avif', 'webp']}
+                width={Math.min(720, src.width)}
+                widths={[360, 720]}
+                sizes="(min-width: 1200px) 272px, (min-width: 1024px) 23vw, (min-width: 640px) 31vw, 47vw"
+                loading="lazy"
+                decoding="async"
+              />
+            </a>
+            {caption && <figcaption>{caption}</figcaption>}
+          </figure>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .album + .album {
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+  }
+
+  .album-header {
+    margin-bottom: 1.25rem;
+  }
+
+  .album-header p {
+    margin-top: 0.35rem;
+  }
+
+  .photos {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(0.75rem, 2vw, 1rem);
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 640px) {
+    .photos {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .photos {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .thumb {
+    display: block;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface-2);
+    box-shadow: var(--shadow);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .thumb:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .thumb :global(picture) {
+    height: 100%;
+  }
+
+  .thumb :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+  }
+
+  .thumb:hover :global(img) {
+    transform: scale(1.03);
+  }
+
+  figcaption {
+    margin-top: 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+</style>
